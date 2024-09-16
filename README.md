@@ -64,7 +64,7 @@
 - **Endpoint**: `GET /alerts`
 - **Description**: Fetches all alerts created by the authenticated user, with optional filtering by status and pagination.
 - **Headers**:
-  - `Authorization`: Bearer `JWT_TOKEN`
+  - `Authorization`: `JWT_TOKEN`
 - **Query Parameters**:
   - `status` (optional): Filter alerts by their status (e.g., `created`, `triggered`, `deleted`). Default is `all`.
   - `page` (optional): Specify the page number for paginated results. Default is `1`.
@@ -115,8 +115,8 @@
 A dedicated service class, PriceAlertService, checks whether the current currency price meets the target prices specified by users. Once an alert is triggered, its status is updated, and a list of user_ids is generated for notifying the respective users.
 - Process:
   - Fetch all alerts where the coin_name matches and status is created and trigger price.
-	- Update the alert’s status to triggered.
-	- Collect the relevant user_ids and pass them to a background job for sending email notifications.
+  - Update the alert’s status to triggered.
+  - Collect the relevant user_ids and pass them to a background job for sending email notifications.
 
 #### Asynchronous Email Notifications:
 - Email notifications are handled asynchronously via ActiveJob, ensuring the primary application flow remains uninterrupted.
