@@ -26,7 +26,7 @@ class PriceAlertService < ApplicationService
 
     return if alerts.empty?
 
-    user_ids = alerts.pluck(:user_id)
+    user_ids = alerts.pluck(:user_id).uniq
     alerts.update_all(status: :triggered)
 
     SendAlertNotificationJob.perform_later(user_ids)
