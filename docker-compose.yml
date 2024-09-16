@@ -1,0 +1,50 @@
+version: '3'
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: price_alert_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  app:
+    build: .
+    command: bundle exec rails s -b '0.0.0.0' -p 3000
+    volumes:
+      - ".:/app"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - redis
+    environment:
+      DATABASE_URL: postgres://user:password@db:5432/price_alert_db
+      REDIS_URL: redis://redis:6379/0
+    stdin_open: true
+    tty: true
+
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq
+    volumes:
+      - ".:/app"
+    depends_on:
+      - db
+      - redis
+    environment:
+      DATABASE_URL: postgres://user:password@db:5432/price_alert_db
+      REDIS_URL: redis://redis:6379/0
+    stdin_open: true
+    tty: true
+
+volumes:
+  db_data:
